@@ -1,4 +1,4 @@
-package com.goc;
+package com.goc.GOC;
 
 import com.reactnativenavigation.controllers.SplashActivity;
 

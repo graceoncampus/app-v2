@@ -1,4 +1,4 @@
-package com.goc;
+package com.goc.GOC;
 
 import android.app.Application;
 
@@ -36,10 +36,5 @@ public class MainApplication extends NavigationApplication {
   @Override
   public List<ReactPackage> createAdditionalReactPackages() {
       return null;
-  }
-
-  @Override
-  protected String getJSMainModuleName() {
-    return "index";
   }
 }
