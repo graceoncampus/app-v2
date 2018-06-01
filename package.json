@@ -3,17 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "babel-preset-react-native-stage-0": "^1.0.1",
-    "jest": "^22.4.4",
-    "jest-react-native": "^18.0.0",
-    "react-test-renderer": "16.3.1",
     "babel-eslint": "^8.2.3",
+    "babel-preset-react-native-stage-0": "^1.0.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
-    "eslint-plugin-react-native": "^3.2.1"
+    "eslint-plugin-react-native": "^3.2.1",
+    "jest": "^22.4.4",
+    "jest-react-native": "^18.0.0",
+    "react-test-renderer": "16.3.1"
   },
   "scripts": {
     "start": "react-native start",
@@ -27,11 +27,11 @@
   "dependencies": {
     "@shoutem/ui": "^0.23.4",
     "react": "16.3.1",
-    "react-native": "~0.55.2",
+    "react-native": "^0.55.4",
     "react-native-firebase": "^4.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
-    "react-native-navigation": "^1.1.462",
-    "react-native-svg": "^6.3.1"
+    "react-native-svg": "^6.3.1",
+    "react-navigation": "^2.0.4"
   },
   "rnpm": {
     "assets": [

@@ -5,5 +5,6 @@ import Divider from './Divider';
 export {
   Text,
   Button,
-  Divider
-}
+  Divider,
+};
+

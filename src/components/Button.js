@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 export default class Button extends Component {
   render() {
@@ -14,7 +14,7 @@ export default class Button extends Component {
       width: '100%',
       height: 50,
     };
-    delete style.underlayColor
+    delete style.underlayColor;
     return (
       <TouchableOpacity
         {...this.props}
