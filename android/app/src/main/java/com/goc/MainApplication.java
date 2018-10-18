@@ -14,6 +14,8 @@ import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import com.horcrux.svg.SvgPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import guichaguri.trackplayer.TrackPlayer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +31,9 @@ public class MainApplication extends Application implements ReactApplication {
         // Add additional packages you require here
         // No need to add RnnPackage and MainReactPackage
         return Arrays.<ReactPackage>asList(
+            new TrackPlayer(),
             new MainReactPackage(),
+            new SplashScreenReactPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
             new RNFirebaseFirestorePackage(),

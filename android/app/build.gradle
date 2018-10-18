@@ -146,11 +146,13 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:15.1.0"
     implementation "com.google.firebase:firebase-firestore:16.0.0"
     implementation "com.google.firebase:firebase-messaging:15.0.2"
+    implementation project(':react-native-splash-screen')
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
     implementation project(':react-native-svg')
     implementation project(':react-native-photo-view')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-vector-icons')
+    implementation project(':react-native-track-player')
     implementation(project(":react-native-firebase")) {
         transitive = false
     }

@@ -1,51 +1,103 @@
 import React from 'react';
-import { TouchableOpacity, View, Image, Text } from 'react-native';
-import { Row, Icon } from '@shoutem/ui';
-import { Divider } from '../../components';
+import { TouchableOpacity, Linking, View, Image } from 'react-native';
 
-const chrisGee = '../../../assets/images/chrisgee.jpg';
-const notificationIcon = '../../../assets/images/notification-icon.png';
+import { Text } from '../../components';
+import { Chevron } from '../../icons';
+import globalStyles from '../../theme';
+import { parseAndFindURLs, getRelativeTime } from '../../utils';
 
-export default class Announcment extends React.Component {
+// const chrisGee = '../../../assets/images/chrisgee.jpg';
+// const notificationIcon = '../../../assets/images/notification-icon.png';
+
+
+export const Meta = ({ announcement, truncated }) => {
+  const description = truncated ? announcement.post : parseAndFindURLs(announcement.post);
+  return (
+    <React.Fragment>
+      <View style={[globalStyles.horizontal, globalStyles.hvCenter]} >
+        <Image
+          style={{
+            borderRadius: 12,
+            width: 24,
+            height: 24,
+            marginRight: 8,
+          }}
+          source={{ uri: announcement.role === 'Chris Gee' ? 'chris' : 'goc_profile' }}
+        />
+        <View style={globalStyles.vertical}>
+          <Text style={[globalStyles.small, globalStyles.bold]}>
+            {announcement.role}
+          </Text>
+          {
+            announcement.date &&
+            <Text style={[globalStyles.caption, { marginTop: -4 }]}>
+              {getRelativeTime(new Date(announcement.date.toString()))}
+            </Text>
+          }
+        </View>
+      </View>
+      <View style={[globalStyles.vertical, { marginTop: 12 }]}>
+        <Text style={[globalStyles.subtitle, globalStyles.bold, { marginBottom: 5 }]}>
+          {announcement.title}
+        </Text>
+        {
+          truncated ?
+          <Text style={globalStyles.subtitle} numberOfLines={2} ellipsizeMode='tail'>
+            {description}
+          </Text>
+          :
+          (
+            <React.Fragment>
+              <Text style={[globalStyles.subtitle]}>{description[0]}</Text>
+              { description[1] !== null &&
+                <Text
+                  style={[
+                    globalStyles.subtitle,
+                    globalStyles.textSecondary,
+                  ]}
+                  onPress={() => Linking.openURL(description[1])}>
+                  {description[1]}
+                </Text>
+              }
+              <Text style={[globalStyles.subtitle]}>{description[2]}</Text>
+            </React.Fragment>
+          )
+        }
+      </View>
+    </React.Fragment>
+  );
+};
+
+export default class Announcement extends React.Component {
   render() {
-    const { announcement, isRead } = this.props;
-    const image = announcement.role === 'Chris Gee' ? require(chrisGee) : require(notificationIcon);
+    const { announcement, isRead, setRead } = this.props;
     return (
-      <TouchableOpacity key={announcement.key} onPress={() => this.setRead(announcement)}>
-        <Row>
-          <View style={{ flex: 1 }} styleName="horizontal v-start">
-            <View style={{ flex: 0.9 }} styleName="vertical">
-              <View styleName="horizontal v-center">
-                <Image style={{ width: 25, height: 25, marginRight: 8 }} styleName="small-avatar" source={image} />
-                <View styleName='vertical'>
-                  <Text size="subtitle" style={{
-                      marginBottom: 2,
-                      fontSize: 14,
-                      lineHeight: 18,
-                    }}
-                  >
-                    {announcement.role}
-                  </Text>
-                  <Text size="caption" style={{ lineHeight: 15 }} >{announcement.time}</Text>
-                </View>
-              </View>
-              <View style={{ marginTop: 12 }} styleName="vertical">
-                <Text size="subtitle" style={{ marginBottom: 5 }} styleName="bold">{announcement.title}</Text>
-                <Text size="subtitle" numberOfLines={2} ellipsizeMode='tail'>{announcement.post}</Text>
-              </View>
+      <TouchableOpacity key={announcement.key} onPress={() => setRead(announcement)}>
+        <View style={[{ paddingBottom: 30 }, globalStyles.borderBottom, globalStyles.row]}>
+          <View style={[globalStyles.horizontal, globalStyles.hvStart, { flex: 1 }]}>
+            <View style={[globalStyles.vertical, { flex: 0.9 }]}>
+              <Meta announcement={announcement} truncated />
             </View>
-            <View styleName="vertical stretch space-between h-end" style={{ flex: 0.1 }}>
+            <View style={[
+              globalStyles.vertical,
+              globalStyles.stretch,
+              globalStyles.spaceBetween,
+              globalStyles.vhEnd,
+              { flex: 0.1 },
+            ]}>
               <View style={{
                   width: 8,
                   height: 8,
                   marginRight: 3,
+                  marginTop: 3,
                   borderRadius: 4,
-                  backgroundColor: isRead ? '#617cce' : 'transparent',
-                  borderColor: !isRead ? '#617cce' : 'transparent',
+                  backgroundColor: isRead ? 'transparent' : '#617cce',
+                  borderColor: '#617cce',
+                  borderWidth: isRead ? 1 : 0,
                 }}
                 styleName="notification-dot"
               />
-              <Icon style={{ fontSize: 22, opacity: 0.5, marginRight: -4 }} styleName="disclosure" name="right-arrow" />
+              <Chevron />
               <View style={{
                   width: 8,
                   height: 8,
@@ -59,8 +111,7 @@ export default class Announcment extends React.Component {
               />
             </View>
           </View>
-        </Row>
-        <Divider styleName="line" />
+        </View>
       </TouchableOpacity>
     );
   }

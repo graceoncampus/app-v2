@@ -3,85 +3,40 @@ import {
   ActivityIndicator,
   StatusBar,
   AppRegistry,
-  View,
+  SafeAreaView,
+  AsyncStorage,
   Platform,
 } from 'react-native';
+import TrackPlayer from 'react-native-track-player';
+import SplashScreen from 'react-native-splash-screen';
 import { createSwitchNavigator, createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import firebase from 'react-native-firebase';
-
+import globalStyles, { variables } from './src/theme';
 import Login from './src/screens/Login';
 import Main from './src/screens/Home';
-// import Signup from './src/screens/auth/signup';
-// import ForgotPassword from './src/screens/auth/forgotPassword';
-// import leaders from './src/screens/leadership/leaders';
-// import roster from './src/screens/roster/roster';
-// import IndividualUser from './src/screens/roster/individualUser';
-// import gocConnect from './src/screens/connect';
-// import events from './src/screens/events/events';
-// import event from './src/screens/events/event';
-// import rides from './src/screens/rides/ridesTab';
-// import myRide from './src/screens/rides/myRide';
-// import classes from './src/screens/classes/classes';
-// import Class from './src/screens/classes/class';
-// import ClassInfo from './src/screens/classes/classInfo';
-// import leader from './src/screens/leadership/leader';
-// import UserInvite from './src/screens/settings/userinvite';
-// import Settings from './src/screens/settings/settings';
-// import ChangePassword from './src/screens/settings/changePassword';
+import Sermons from './src/screens/Sermons';
+import Post from './src/screens/Post';
+import EditPost from './src/screens/EditPost';
+import { saveToken } from './src/utils';
+import { Logo } from './src/icons';
+import registerAppListener from './src/listeners';
+import store from './src/store';
+
+firebase.firestore().settings({
+  persistence: true,
+  ssl: true,
+});
 
 const homeStack = createStackNavigator({
   Home: { screen: Main },
-  // AddPost: { screen: addPost },
-  // Post: { screen: Post },
-  // editPost: { screen: editPost },
+  Post: { screen: Post },
+  Preview: { screen: Post },
+  EditPost: { screen: EditPost },
 });
 
-// const eventsStack = createStackNavigator({
-//   Events: { screen: events },
-//   Event: { screen: event },
-// });
-
-// const classesStack = createStackNavigator({
-//   Classes: { screen: classes },
-//   Class: { screen: Class },
-//   ClassInfo: { screen: ClassInfo },
-// });
-
-// const ridesStack = createStackNavigator({
-//   Rides: { screen: rides },
-//   MyRide: { screen: myRide },
-//   User: { screen: IndividualUser },
-// });
-
-// const leadershipStack = createStackNavigator({
-//   Leaders: {
-//     screen: leaders,
-//     navigationOptions: {
-//       gesturesEnabled: false,
-//     },
-//   },
-//   Leader: {
-//     screen: leader,
-//     navigationOptions: {
-//       gesturesEnabled: false,
-//     },
-//   },
-// });
-
-// const connectStack = createStackNavigator({
-//   GOCConnect: { screen: gocConnect },
-// });
-
-// const rosterStack = createStackNavigator({
-//   Roster: { screen: roster },
-//   IndividualUser: { screen: IndividualUser },
-// });
-
-// const settingsStack = createStackNavigator({
-//   Settings: { screen: Settings },
-//   PasswordChange: { screen: ChangePassword },
-//   inviteUser: { screen: UserInvite },
-// });
+const sermonStack = createStackNavigator({
+  Serm: { screen: Sermons },
+});
 
 const AppStack = createDrawerNavigator({
   Home: {
@@ -90,6 +45,7 @@ const AppStack = createDrawerNavigator({
       gesturesEnabled: false,
     },
   },
+  Sermons: sermonStack,
   // Connect: {
   //   screen: connectStack,
   //   navigationOptions: {
@@ -136,9 +92,9 @@ const AppStack = createDrawerNavigator({
   drawerWidth: 160,
   contentOptions: {
     activeTintColor: '#fff',
-    activeBackgroundColor: '#ae956b',
+    activeBackgroundColor: variables.primary,
     labelStyle: {
-      fontFamily: 'Akkurat TT',
+      fontFamily: 'Akkurat',
     },
     style: {
       height: 'auto',
@@ -166,25 +122,44 @@ const AuthStack = createStackNavigator({
   headerMode: 'none',
 });
 
-
 class AuthLoadingScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.auth();
+  async componentDidMount() {
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        const firstLaunch = await AsyncStorage.getItem('first');
+        const ref = firebase.firestore().collection('users').doc(user.uid);
+        if (firstLaunch !== 'true') {
+          firebase.messaging().hasPermission().then(hasPermission =>
+            !hasPermission && firebase.messaging().requestPermission());
+          firebase.messaging().getToken().then(Token => (saveToken(Token)));
+          const channel = new firebase.notifications.Android.Channel('test-channel', 'Test Channel', firebase.notifications.Android.Importance.Max)
+            .setDescription('My apps test channel');
+          firebase.notifications().android.createChannel(channel);
+          AsyncStorage.setItem('first', 'true');
+        }
+        registerAppListener(this.props.navigation, ref);
+        ref.get().then((snapshot) => {
+          const { permissions, readList } = snapshot.data();
+          SplashScreen.hide();
+          this.props.navigation.navigate('Home', {
+            permissions,
+            readList,
+          });
+        }).catch(err => console.warn(err));
+      } else {
+        SplashScreen.hide();
+        this.props.navigation.navigate('Auth');
+      }
+    });
   }
 
-  // Fetch the token from storage then navigate to our appropriate place
-  auth = async () => {
-    firebase.auth().onAuthStateChanged(user => (this.props.navigation.navigate(user ? 'App' : 'Auth')));
-  };
-
-  // Render any loading content that you like here
   render() {
     return (
-      <View>
+      <SafeAreaView style={[globalStyles.vvCenter, globalStyles.vhCenter, { backgroundColor: variables.primary, flex: 1 }]}>
+        <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true}/>
+        <Logo style={{ marginBottom: 30 }} width={150} height={57.75} color="#fff" />
         <ActivityIndicator />
-        <StatusBar barStyle="default" />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -201,3 +176,22 @@ const RootStack = createSwitchNavigator(
 );
 
 AppRegistry.registerComponent('GOC', () => RootStack);
+
+TrackPlayer.registerEventHandler(async (data) => {
+  if (data.type === 'playback-track-changed') {
+    if (data.nextTrack) {
+      const { title, artist } = await TrackPlayer.getTrack(data.nextTrack);
+      store.setState({ title, artist, id: data.nextTrack });
+    }
+  } else if (data.type === 'remote-play') {
+    TrackPlayer.play();
+  } else if (data.type === 'remote-pause') {
+    TrackPlayer.pause();
+  } else if (data.type === 'remote-next') {
+    TrackPlayer.skipToNext();
+  } else if (data.type === 'remote-previous') {
+    TrackPlayer.skipToPrevious();
+  } else if (data.type === 'playback-state') {
+    store.setState({ playbackState: data.state });
+  }
+});

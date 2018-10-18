@@ -13,6 +13,7 @@
 #import <Firebase.h>
 #import "RNFirebaseNotifications.h"
 #import "RNFirebaseMessaging.h"
+#import "SplashScreen.h"
 
 @implementation AppDelegate
 
@@ -21,15 +22,6 @@
   [FIRApp configure];
   [RNFirebaseNotifications configure];
   NSURL *jsCodeLocation;
-  for (NSString* family in [UIFont familyNames])
-  {
-    NSLog(@"%@", family);
-    
-    for (NSString* name in [UIFont fontNamesForFamilyName: family])
-    {
-      NSLog(@"  %@", name);
-    }
-  }
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
@@ -43,6 +35,7 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [SplashScreen show];
   return YES;
 }
 

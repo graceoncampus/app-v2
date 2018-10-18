@@ -1,14 +1,6 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { connectStyle } from '@shoutem/theme';
-import { connectAnimation } from '@shoutem/animation';
-
-export default class Divider extends PureComponent {
-  render() {
-    return <View style={[styles.divider, this.props.type && styles[this.props.type]]} />
-  }
-}
 
 const styles = StyleSheet.create({
   divider: {
@@ -28,5 +20,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: '#e5e5e5',
+  },
+});
+
+
+export default class Divider extends PureComponent {
+  render() {
+    return <View style={[styles.divider, this.props.type && styles[this.props.type]]} />;
   }
-})
+}
