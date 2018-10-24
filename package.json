@@ -33,7 +33,7 @@
     "react-native-splash-screen": "^3.0.7",
     "react-native-svg": "^6.3.1",
     "react-native-text-ticker": "^0.7.0",
-    "react-native-track-player": "^0.2.4",
+    "react-native-track-player": "^1.0.0",
     "react-navigation": "^2.0.4",
     "unistore": "^3.0.6",
     "vague-time": "^2.4.1"
